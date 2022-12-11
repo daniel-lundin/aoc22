@@ -36,6 +36,28 @@ function to_symbol(value)
 	end
 end
 
+function move_needed(opponent_move, result)
+	if result == 'Y' then -- Draw
+		return opponent_move
+	elseif result == 'X' then -- Loose
+		if opponent_move == 'Rock' then
+			return 'Scissors'
+		elseif opponent_move == 'Paper' then
+			return 'Rock'
+		else
+			return 'Paper'
+		end
+	else -- loose
+		if opponent_move == 'Rock' then
+			return 'Paper'
+		elseif opponent_move == 'Paper' then
+			return 'Scissors'
+		else
+			return 'Rock'
+		end
+	end
+end
+
 points = 0
 
 while true do
@@ -43,8 +65,8 @@ while true do
 	if line ~= nil then
 		splitter = string.gmatch(line, '%S')
 		opponent_move = to_symbol(splitter())
-		my_move = to_symbol(splitter())
-
+		desired_result = splitter()
+		my_move = move_needed(opponent_move, desired_result)
 		points = points + match_result(opponent_move, my_move) + symbol_point(my_move)
 
 	else
