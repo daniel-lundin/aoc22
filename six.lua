@@ -2,19 +2,24 @@ io.input('./input-6.txt')
 
 local line = io.read("*line")
 
+function count_letters(letters) 
+	local count = 0
+	for key,value in pairs(letters) do
+		count = count + 1
+	end
+	return count
+end
 
 function first_start_marker(line)
 	print('trying out', line)
-	max = string.len(line)-4
+	max = string.len(line) - 14
 	for i=1,max do
-		local a = string.sub(line, i, i)
-		local b = string.sub(line, i+1, i+1)
-		local c = string.sub(line, i+2, i+2)
-		local d = string.sub(line, i+3, i+3)
-		print('chars', a,b,c,d)
-
-		if a ~= b and a ~= c and a ~= d and b ~= c and b ~= d and c ~= d then
-			return i + 3
+		local letters = {}
+		for j=1,14 do
+			letters[string.sub(line, i+j, i+j)] = true
+		end
+		if count_letters(letters) == 14 then
+			return i + 14
 		end
 	end
 end
