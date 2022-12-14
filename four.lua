@@ -1,9 +1,9 @@
 io.input('./input-4.txt')
 
 function range_overlaps(a, b, c, d)
-	if a <= c and b >= d then
+	if a <= c and b >= c then
 		return true
-	elseif c <= a and d >= b then
+	elseif a >= c and a <= d then
 		return true
 	else
 		return false
