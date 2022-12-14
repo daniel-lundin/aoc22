@@ -4,6 +4,11 @@ io.input('./input-5.txt')
 -- [N] [C]    
 -- [Z] [M] [P]
 --  1   2   3 
+-- stacks = {
+-- 	'NZ',
+-- 	'MCD',
+-- 	'P',
+-- }
 
 stacks = {
 	'DLJRVGF',
@@ -38,7 +43,7 @@ function apply_procedure(amount, from, to)
 	local popped_stacks = string.sub(stacks[from], string.len(stacks[from]) - amount + 1, string.len(stacks[from]))
 	local left_in_stack = string.sub(stacks[from], 1, string.len(stacks[from]) - amount)
 
-	stacks[to] = stacks[to] .. string.reverse(popped_stacks)
+	stacks[to] = stacks[to] .. popped_stacks
 	stacks[from] = left_in_stack
 end
 
@@ -55,6 +60,7 @@ while true do
 end
 
 for key, value in ipairs(stacks) do
-	print(string.sub(value, string.len(value)))
+	io.write(string.sub(value, string.len(value)))
 end
+print('')
 
