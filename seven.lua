@@ -1,4 +1,6 @@
 io.input('./input-7.txt')
+total_disk_space = 70000000
+space_needed = 30000000
 
 function create_directory(name, parent)
 	return {
@@ -86,12 +88,20 @@ end
 dump_dir(root, 0)
 
 
-total_directory_size = 0
+
+disk_usage =  sum_file_sizes(root)
+print('total file size ', disk_usage)
+free_space = total_disk_space - disk_usage 
+print('free space ', free_space)
+space_to_free = space_needed - free_space
+print('space to free ', space_to_free)
+
+smallest_directory_big_enough = total_disk_space
 directory_walk(root, function(dir) 
 	directory_size = sum_file_sizes(dir)
-	if directory_size <= 100000 then
-		total_directory_size = total_directory_size + directory_size
+	if directory_size >= space_to_free and directory_size < smallest_directory_big_enough then
+		smallest_directory_big_enough = directory_size
 	end
 end)
 
-print('total size is', total_directory_size)
+print('size of dir',  smallest_directory_big_enough)
