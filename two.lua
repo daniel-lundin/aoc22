@@ -2,7 +2,7 @@ io.input('./input-2.txt')
 
 -- Rock paper scissors
 
-function match_result(opponent_move, my_move)
+local function match_result(opponent_move, my_move)
 	if opponent_move == my_move then
 		return 3
 	elseif opponent_move == 'Rock' and my_move == 'Paper' then
@@ -16,7 +16,7 @@ function match_result(opponent_move, my_move)
 	end
 end
 
-function symbol_point(symbol)
+local function symbol_point(symbol)
 	if symbol == 'Rock' then
 		return 1
 	elseif symbol == 'Paper' then
@@ -26,17 +26,17 @@ function symbol_point(symbol)
 	end
 end
 
-function to_symbol(value)
+local function to_symbol(value)
 	if value == 'A' or value == 'X' then
 		return 'Rock'
 	elseif value == 'B' or value == 'Y' then
 		return 'Paper'
-	else 
+	else
 		return 'Scissors'
 	end
 end
 
-function move_needed(opponent_move, result)
+local function move_needed(opponent_move, result)
 	if result == 'Y' then -- Draw
 		return opponent_move
 	elseif result == 'X' then -- Loose
@@ -58,19 +58,19 @@ function move_needed(opponent_move, result)
 	end
 end
 
-points = 0
+local points = 0
 
 while true do
 	local line = io.read("*line")
 	if line ~= nil then
-		splitter = string.gmatch(line, '%S')
-		opponent_move = to_symbol(splitter())
-		desired_result = splitter()
-		my_move = move_needed(opponent_move, desired_result)
+		local splitter = string.gmatch(line, '%S')
+		local opponent_move = to_symbol(splitter())
+		local desired_result = splitter()
+		local my_move = move_needed(opponent_move, desired_result)
 		points = points + match_result(opponent_move, my_move) + symbol_point(my_move)
 
 	else
-		break 
+		break
 	end
 end
 

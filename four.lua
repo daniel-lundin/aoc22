@@ -1,6 +1,6 @@
 io.input('./input-4.txt')
 
-function range_overlaps(a, b, c, d)
+local function range_overlaps(a, b, c, d)
 	if a <= c and b >= c then
 		return true
 	elseif a >= c and a <= d then
@@ -10,12 +10,12 @@ function range_overlaps(a, b, c, d)
 	end
 end
 
-function parse_section(section)
+local function parse_section(section)
 	local parts = section:gmatch('[^-]+')
 	return tonumber(parts()), tonumber(parts())
 end
 
-overlaps = 0
+local overlaps = 0
 while true do
 	local line = io.read("*line")
 	if line == nil then

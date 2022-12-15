@@ -7,12 +7,12 @@ while true do
   local line = io.read("*line")
   if line == nil then
     table.insert(elf_calories, calories)
-    break 
+    break
   elseif line == '' then
     table.insert(elf_calories, calories)
     calories = 0
   else
-    number = tonumber(line)
+    local number = tonumber(line)
     calories = calories + number
   end
 end

@@ -1,13 +1,7 @@
 io.input('./input-3.txt')
 
-function dump(obj)
-	for key,value in pairs(obj) do
-		print(key, value)
-	end
-end
-
-function three_way_intersection(a, b, c) 
-	intersecting_keys = {}
+local function three_way_intersection(a, b, c)
+	local intersecting_keys = {}
 	for a_key in pairs(a) do
 		for b_key in pairs(b) do
 			for c_key in pairs(c) do
@@ -21,8 +15,8 @@ function three_way_intersection(a, b, c)
 	return intersecting_keys
 end
 
-function get_item_prio(item)
-	ascii_value = string.byte(item)
+local function get_item_prio(item)
+	local ascii_value = string.byte(item)
 	if ascii_value >= 97 then
 		return ascii_value - 96
 	else
@@ -31,22 +25,22 @@ function get_item_prio(item)
 end
 
 
-function tokenize_line(line)
-	letters = {}
+local function tokenize_line(line)
+	local letters = {}
 	for letter in line:gmatch(".") do
 		letters[letter] = true
 	end
 	return letters
 end
 
-item_prio_sum = 0
+local item_prio_sum = 0
 while true do
 	local lines = {io.read("*line"), io.read("*line"),  io.read("*line")}
 	if lines[1] == nil then
 		break
 	end
 	local tokenized_lines = {tokenize_line(lines[1]), tokenize_line(lines[2]), tokenize_line(lines[3])}
-	common_items = three_way_intersection(tokenized_lines[1], tokenized_lines[2], tokenized_lines[3])
+	local common_items = three_way_intersection(tokenized_lines[1], tokenized_lines[2], tokenized_lines[3])
 	for key in pairs(common_items) do
 		item_prio_sum = item_prio_sum + get_item_prio(key)
 	end

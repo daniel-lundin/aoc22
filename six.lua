@@ -2,17 +2,16 @@ io.input('./input-6.txt')
 
 local line = io.read("*line")
 
-function count_letters(letters) 
+local function count_letters(letters) 
 	local count = 0
-	for key,value in pairs(letters) do
+	for _,_ in pairs(letters) do
 		count = count + 1
 	end
 	return count
 end
 
-function first_start_marker(line)
-	print('trying out', line)
-	max = string.len(line) - 14
+local function first_start_marker(line)
+	local max = string.len(line) - 14
 	for i=1,max do
 		local letters = {}
 		for j=1,14 do
