@@ -36,6 +36,7 @@ local function parse_condition(line)
 end
 
 local monkeys = {}
+local dividable_factors = 1
 while true do
 	io.read("*line") -- Monkey index line
 	table.insert(monkeys, {
@@ -66,23 +67,33 @@ local function apply_operation(item, operation)
 	else
 		new = item * argument
 	end
-	return math.floor(new/3)
+	return new
 end
 
-local round = 0
 local worry_level=0
-local total_round=20
+local total_rounds=10000
 
-for i=1,total_round do
+local dividable_factor = 1
+
+for monkey_index, monkey in ipairs(monkeys) do
+	dividable_factor = dividable_factor * monkey['test']
+end
+
+for i=1,total_rounds do
 	for monkey_index, monkey in ipairs(monkeys) do
 		while #monkey['items'] > 0 do
 			local item = table.remove(monkey['items'], 1)
 			local updated_worry_level = apply_operation(item, monkey['operation'])
+			local next_monkey_index
 			if updated_worry_level % monkey['test'] == 0 then
-				table.insert(monkeys[monkey['true_condition'] + 1]['items'], updated_worry_level)
+				next_monkey_index = monkey['true_condition'] + 1
 			else
-				table.insert(monkeys[monkey['false_condition'] + 1]['items'], updated_worry_level)
+				next_monkey_index = monkey['false_condition'] + 1
 			end
+			local next_monkey = monkeys[next_monkey_index]
+
+			updated_worry_level = dividable_factor + updated_worry_level % dividable_factor
+			table.insert(next_monkey['items'], updated_worry_level)
 			monkey['inspections'] = monkey['inspections'] + 1
 		end
 	end
@@ -90,12 +101,7 @@ end
 
 local inspections = {}
 for monkey_index, monkey in ipairs(monkeys) do
-	io.write('Monkey '.. monkey_index .. ' items: ')
-	for _, item in ipairs(monkey['items']) do
-		io.write(item .. ' ')
-	end
-	print('')
-	print('Inspections ', monkey['inspections'])
+	print('Monkey ' .. monkey_index .. ' inspections ' .. monkey['inspections'])
 	table.insert(inspections, monkey['inspections'])
 end
 table.sort(inspections, function(a, b) return a > b end)
