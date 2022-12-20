@@ -118,30 +118,63 @@ local function is_right_order(packet1, packet2)
 	return UNDECIDED
 end
 
-local correct_index_sum = 0
-local index = 1
-while true do
-	local line1 = io.read("*line")
-	local line2 = io.read('*line')
+local function packet_to_string(packet)
+	local s = ''
+	for index, part in ipairs(packet) do
+		if type(part) == 'number' then
+			s = s .. part
+		elseif type(part) == 'table' then
 
-	local tokens1 = tokenize_line(line1)
-	local tokens2 = tokenize_line(line2)
+			s = s .. '[' .. packet_to_string(part) .. ']'
+		end
 
-	local packet1 = {}
-	local packet2 = {}
-	parse_packet(tokens1, packet1)
-	parse_packet(tokens2, packet2)
-
-	if is_right_order(packet1, packet2) == YES then
-		correct_index_sum = correct_index_sum + index
+		if index ~= #packet then
+			s = s .. ', '
+		end
 	end
-
-	local delimiter = io.read('*line')
-
-	if delimiter == nil then
-		break
-	end
-	index = index + 1
+	return s
 end
 
-print('correct index sum', correct_index_sum)
+local packets = {}
+
+while true do
+	local line = io.read("*line")
+	if line == nil then
+		break
+	elseif line == '' then
+	else
+		local tokens = tokenize_line(line)
+
+		local packet = {}
+		parse_packet(tokens, packet)
+		table.insert(packets, packet)
+	end
+
+
+end
+
+-- insert delimiters
+local delimiter1 = {}
+parse_packet(tokenize_line('[[2]]'), delimiter1)
+local delimiter2 = {}
+parse_packet(tokenize_line('[[6]]'), delimiter2)
+table.insert(packets, delimiter1)
+table.insert(packets, delimiter2)
+
+table.sort(packets, function (packet1, packet2)
+	return is_right_order(packet1, packet2) == YES
+end)
+
+local delimiter1_index
+local delimiter2_index
+for index, packet in ipairs(packets) do
+	local as_string = packet_to_string(packet)
+	if as_string == '[[2]]' then
+		delimiter1_index = index
+	end
+	if as_string == '[[6]]' then
+		delimiter2_index = index
+	end
+end
+
+print('indices', delimiter1_index, delimiter2_index, delimiter1_index * delimiter2_index)
