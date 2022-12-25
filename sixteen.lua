@@ -1,4 +1,4 @@
-io.input('./input-16-sample.txt')
+io.input('./input-16.txt')
 
 local valves = {}
 local valve_count = 0
