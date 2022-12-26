@@ -1,8 +1,7 @@
-io.input('./input-16-sample.txt')
+io.input('./input-16.txt')
 
 local valves = {}
 local valve_count = 0
-local start_valve = nil
 
 while true do
 	local line = io.read('*line')
@@ -27,9 +26,6 @@ while true do
 		table.insert(paths, path)
 	end
 
-	if start_valve == nil then
-		start_valve = valve
-	end
 	valves[valve] = {
 		flow_rate,
 		paths
@@ -66,7 +62,6 @@ for valve in pairs(valves) do
             tentative_distances[valve] = 0
 
             local current_node = valve
-            -- print('current_node', current_node)
 
             while set_length(unvisited_nodes) > 0 do
                 for _, path in pairs(valves[current_node][2]) do
@@ -90,7 +85,6 @@ for valve in pairs(valves) do
                 end
             end
 
-            print('shortest distance '.. valve .. ' to ' .. destination .. ' ' .. tentative_distances[destination])
             shortest_paths[valve][destination] = tentative_distances[destination]
         end
     end
@@ -98,18 +92,17 @@ end
 
 local max_pressure = 0
 
-local function visit(valve, unvisited, minute, total_pressure, depth, path)
+local function visit(valve, unvisited, minute, total_pressure, path)
     local new_pressure = total_pressure
-    if valves[valve][1] > 0 then
-        -- print('shoud now happen')
-        new_pressure = new_pressure + math.floor(math.max((30 - minute-1) * valves[valve][1], 0))
-        minute = minute + 1
+    local pressure_addition = (30 - minute) * valves[valve][1]
+    if pressure_addition > 0 then
+        new_pressure = new_pressure + pressure_addition
+        minute = minute + 1 -- spend one minute to open valve
     end
 
-    if #unvisited == 0 or minute > 30 then
+    if #unvisited == 0 or minute >= 30 then
         if new_pressure > max_pressure then
             max_pressure = new_pressure
-            print('max pressure', max_pressure, path)
         end
         return
     end
@@ -123,19 +116,18 @@ local function visit(valve, unvisited, minute, total_pressure, depth, path)
                 table.insert(left_to_visit, node_left)
             end
         end
-        visit(node, left_to_visit, minute + distance , new_pressure, depth + 1, path .. ', ' .. node)
+        local next_pressure_addition = (30 - (minute+distance)) * valves[node][1]
+        visit(node, left_to_visit, minute + distance , new_pressure, path .. node .. '(' .. next_pressure_addition .. ', minute: ' .. distance + minute ..')\n')
     end
 end
 
 local unvisited = {}
 for valve in pairs(valves) do
-     if valve ~= start_valve and valves[valve][1] > 0 then
+     if valve ~= 'AA' and valves[valve][1] > 0 then
          table.insert(unvisited, valve)
      end
 end
-print('length', #unvisited)
-for _, v in pairs(unvisited) do
-    print('v' , v)
-end
-visit(start_valve, unvisited, 0, 0, 0, '')
+
+
+visit('AA', unvisited, 1, 0, 'AA' .. '(minute 1)\n')
 print('max pressure', max_pressure)
