@@ -109,7 +109,7 @@ local function visit(valve, unvisited, minute, total_pressure, depth, path)
     if #unvisited == 0 or minute > 30 then
         if new_pressure > max_pressure then
             max_pressure = new_pressure
-            -- print('max pressure', max_pressure, path)
+            print('max pressure', max_pressure, path)
         end
         return
     end
