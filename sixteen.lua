@@ -91,20 +91,37 @@ for valve in pairs(valves) do
 end
 
 local max_pressure = 0
+local total_minutes = 26
 
-local function visit(valve, unvisited, minute, total_pressure, path)
+local function visit(valve, unvisited, minute, total_pressure, is_elephant)
     local new_pressure = total_pressure
-    local pressure_addition = (30 - minute) * valves[valve][1]
+    local pressure_addition = (total_minutes - minute) * valves[valve][1]
     if pressure_addition > 0 then
         new_pressure = new_pressure + pressure_addition
         minute = minute + 1 -- spend one minute to open valve
     end
 
-    if #unvisited == 0 or minute >= 30 then
+    if #unvisited == 0 or minute >= total_minutes then
         if new_pressure > max_pressure then
             max_pressure = new_pressure
         end
         return
+    end
+
+    if max_pressure > 0 then
+        local potential_pressure_left = 0
+        for _, node in pairs(unvisited) do
+            if is_elephant then
+                potential_pressure_left = potential_pressure_left + valves[node][1] * (total_minutes - minute)
+            else
+                potential_pressure_left = potential_pressure_left + valves[node][1] * (total_minutes)
+            end
+        end
+        -- is this a dead end?
+        if max_pressure > new_pressure + potential_pressure_left then
+            -- print('giving up, max potential', new_pressure + potential_pressure_left, potential_pressure_left, max_pressure)
+            return
+        end
     end
 
     for _, node in pairs(unvisited) do
@@ -116,8 +133,18 @@ local function visit(valve, unvisited, minute, total_pressure, path)
                 table.insert(left_to_visit, node_left)
             end
         end
-        local next_pressure_addition = (30 - (minute+distance)) * valves[node][1]
-        visit(node, left_to_visit, minute + distance , new_pressure, path .. node .. '(' .. next_pressure_addition .. ', minute: ' .. distance + minute ..')\n')
+
+        table.sort(left_to_visit, function(a, b)
+            return valves[a][1] > valves[b][1]
+        end)
+
+        if not is_elephant and #left_to_visit > 6 and #left_to_visit < 9 then
+            local new_pressure_addition = math.floor(math.max((total_minutes - minute - distance) * valves[node][1], 0))
+            visit('AA', left_to_visit, 1, new_pressure + new_pressure_addition, true)
+
+        end
+        -- regular walk
+        visit(node, left_to_visit, minute + distance, new_pressure, is_elephant)
     end
 end
 
@@ -128,6 +155,5 @@ for valve in pairs(valves) do
      end
 end
 
-
-visit('AA', unvisited, 1, 0, 'AA' .. '(minute 1)\n')
+visit('AA', unvisited, 1, 0, false)
 print('max pressure', max_pressure)
